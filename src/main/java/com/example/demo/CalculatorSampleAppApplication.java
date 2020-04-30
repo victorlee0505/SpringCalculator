@@ -1,0 +1,28 @@
+package com.example.demo;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+
+// @SpringBootApplication
+// public class CalculatorSampleAppApplication {
+
+// 	public static void main(String[] args) {
+// 		SpringApplication.run(CalculatorSampleAppApplication.class, args);
+// 	}
+// }
+
+
+@SpringBootApplication
+public class CalculatorSampleAppApplication extends SpringBootServletInitializer {
+
+	public static void main(String[] args) {
+		SpringApplication.run(CalculatorSampleAppApplication.class, args);
+	}
+
+	@Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
+        return builder.sources(CalculatorSampleAppApplication.class);
+    }
+}
