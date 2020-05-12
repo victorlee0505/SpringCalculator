@@ -1,8 +1,22 @@
+# This is a .gitignore template. You may add new own entries for your own development environment.
+# please create a .gitignore file in your project root.
+# Please do not check in files in 
+/.settings/
+/.sts4-cache/
 /target/
-/settings/
+/logs/
+/outDiffs/
+/testOutput/
 /.classpath
+/bin/
+/.factorypath
+/.checkstyle
+/.gitignore
+/src/test/java/META-INF/MANIFEST.MF
+*.bak
 *.class
-!.mvn/wrapper/maven-wrapper.jar
+*.tmp
+nppBackup
 
 /.vscode/
 ### STS ###
