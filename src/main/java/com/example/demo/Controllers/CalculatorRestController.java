@@ -1,16 +1,19 @@
 package com.example.demo.Controllers;
 
-import java.lang.annotation.Annotation;
+import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
 import com.example.demo.Models.Calculator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.microsoft.applicationinsights.core.dependencies.http.protocol.HTTP;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -23,9 +26,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import ch.qos.logback.core.recovery.ResilientFileOutputStream;
-import io.micrometer.core.ipc.http.HttpSender.Response;
 
 @Controller
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -130,6 +130,61 @@ public class CalculatorRestController {
 		response.put("rightOperand", String.valueOf(rightNumber));
 		response.put("Operator", operator);
 		response.put("Result", String.valueOf(result));
+
+		return ResponseEntity.ok(response);
+
+	}
+
+	@RequestMapping(value = "/api/randomtext", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Map<String, String>> getRandomText() {
+
+		LOG.info("GET: /api/random: Everything is random.");
+
+		Double leftNumber = (double) new Random().nextInt(999);
+		Double rightNumber = (double) new Random().nextInt(999);
+
+		Integer randomIndex = new Random().nextInt(5);
+
+		String[] operatorList = { "+", "-", "*", "/", "^" };
+
+		String operator = operatorList[randomIndex];
+
+		LOG.info("GET: /api/random: [{}] [{}] [{}]", String.valueOf(leftNumber), operator, String.valueOf(rightNumber));
+
+		Calculator calculator = new Calculator(leftNumber, rightNumber, operator);
+
+		Double result = calculator.calculateResult();
+
+		LOG.info("GET: /api/random: result = [{}]", result);
+
+		if (result.isInfinite()) {
+			LOG.error("ERROR: Result is too big");
+		}
+
+		Map<String, String> response = new HashMap<>();
+
+		response.put("leftOperand", String.valueOf(leftNumber));
+		response.put("rightOperand", String.valueOf(rightNumber));
+		response.put("Operator", operator);
+		response.put("Result", String.valueOf(result));
+
+		String outpuString = String.valueOf(leftNumber) + operator + String.valueOf(rightNumber)
+				+ String.valueOf(result);
+
+		Calendar newDate = Calendar.getInstance();
+
+		final String ts = DateFormatUtils.format(newDate, "YYYYMMDDmmss");
+
+		File output = new File("./RESTfile/", "randomtext_" + ts + ".txt");
+		LOG.info("Write file: [{}]", output.getAbsolutePath());
+
+		try {
+			FileUtils.writeStringToFile(output, outpuString, "utf-8");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		LOG.info("Write file: success");
 
 		return ResponseEntity.ok(response);
 
